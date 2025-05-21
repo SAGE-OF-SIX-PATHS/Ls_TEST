@@ -1,18 +1,15 @@
-import mongoose, { Schema, Document } from 'mongoose';
+// src/models/VirtualCard.ts
+import mongoose from 'mongoose';
 
-export interface IVirtualCard extends Document {
-          cardNumber: string;
-          cvv: string;
-          expiryDate: string;
-          accountId: mongoose.Types.ObjectId;
-}
-
-const VirtualCardSchema: Schema = new Schema({
-          cardNumber: { type: String, required: true, unique: true },
-          cvv: { type: String, required: true },
-          expiryDate: { type: String, required: true },
+const VirtualCardSchema = new mongoose.Schema({
+          cardNumberEncrypted: { type: String, required: true },
+          cardIV: { type: String, required: true },
+          cvvEncrypted: { type: String, required: true },
+          cvvIV: { type: String, required: true },
+          expiryEncrypted: { type: String, required: true },
+          expiryIV: { type: String, required: true },
           accountId: { type: mongoose.Schema.Types.ObjectId, ref: 'BankAccount', required: true }
-});
+}, { timestamps: true });
 
-const VirtualCard = mongoose.model<IVirtualCard>('VirtualCard', VirtualCardSchema);
+const VirtualCard = mongoose.model('VirtualCard', VirtualCardSchema);
 export default VirtualCard;
