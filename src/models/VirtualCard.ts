@@ -1,4 +1,3 @@
-// src/models/VirtualCard.ts
 import mongoose from 'mongoose';
 
 const VirtualCardSchema = new mongoose.Schema({

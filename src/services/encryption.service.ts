@@ -45,12 +45,56 @@ export interface EncryptedInput {
           dobIV: string;
 }
 
+/**
+ * Decrypts encrypted sensitive fields using their corresponding IVs.
+ * Includes verbose logs and safely skips missing/invalid inputs.
+ */
 export function decryptFields(data: EncryptedInput): SensitiveFields {
-          return {
-                    cardNumber: decrypt(data.cardNumberEncrypted, data.cardIV),
-                    cvv: decrypt(data.cvvEncrypted, data.cvvIV),
-                    expiryDate: decrypt(data.expiryEncrypted, data.expiryIV),
-                    phoneNumber: decrypt(data.phoneEncrypted, data.phoneIV),
-                    dateOfBirth: decrypt(data.dobEncrypted, data.dobIV),
-          };
+          console.log('\n🔓 [decryptFields] Starting decryption process...');
+
+          const result: Partial<SensitiveFields> = {};
+
+          if (data.cardNumberEncrypted && data.cardIV) {
+                    console.log('[decryptFields] Decrypting card number...');
+                    result.cardNumber = decrypt(data.cardNumberEncrypted, data.cardIV);
+          } else {
+                    result.cardNumber = '';
+                    console.warn('[decryptFields] Skipping card number: Missing encrypted data or IV.');
+          }
+
+          if (data.cvvEncrypted && data.cvvIV) {
+                    console.log('[decryptFields] Decrypting CVV...');
+                    result.cvv = decrypt(data.cvvEncrypted, data.cvvIV);
+          } else {
+                    result.cvv = '';
+                    console.warn('[decryptFields] Skipping CVV: Missing encrypted data or IV.');
+          }
+
+          if (data.expiryEncrypted && data.expiryIV) {
+                    console.log('[decryptFields] Decrypting expiry date...');
+                    result.expiryDate = decrypt(data.expiryEncrypted, data.expiryIV);
+          } else {
+                    result.expiryDate = '';
+                    console.warn('[decryptFields] Skipping expiry date: Missing encrypted data or IV.');
+          }
+
+          if (data.phoneEncrypted && data.phoneIV) {
+                    console.log('[decryptFields] Decrypting phone number...');
+                    result.phoneNumber = decrypt(data.phoneEncrypted, data.phoneIV);
+          } else {
+                    result.phoneNumber = '';
+                    console.warn('[decryptFields] Skipping phone number: Missing encrypted data or IV.');
+          }
+
+          if (data.dobEncrypted && data.dobIV) {
+                    console.log('[decryptFields] Decrypting date of birth...');
+                    result.dateOfBirth = decrypt(data.dobEncrypted, data.dobIV);
+          } else {
+                    result.dateOfBirth = '';
+                    console.warn('[decryptFields] Skipping date of birth: Missing encrypted data or IV.');
+          }
+
+          console.log('✅ [decryptFields] Finished decryption:', result);
+
+          return result as SensitiveFields;
 }

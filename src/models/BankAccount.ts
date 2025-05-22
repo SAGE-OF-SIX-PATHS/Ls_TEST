@@ -1,4 +1,3 @@
-// src/models/BankAccount.ts
 import mongoose from 'mongoose';
 
 const BankAccountSchema = new mongoose.Schema({

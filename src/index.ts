@@ -11,7 +11,7 @@ app.use(express.json());
 
 
 app.use(express.json());
-app.use('/api', accountRoutes); // endpoint: /api/accounts/create
+app.use('/api', accountRoutes); // endpoint: /handle accounts fetch and post task
 
 
 const PORT = process.env.PORT || 5000;
