@@ -81,6 +81,8 @@ Encryption ensures that even if database access is compromised, sensitive data r
 
 ## 🧾 Endpoints
 
+### API BASE URL: ```https://ls-test-064b.onrender.com```
+
 ### ✅ 1. `GET /api/createBankAccount`
 Instantly create user bank account and authomatically generates a virtual card with 3 fields: card number, cvv, expiry date (3 years from date of creation).
 
