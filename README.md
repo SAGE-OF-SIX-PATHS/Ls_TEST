@@ -151,8 +151,3 @@ This app handles **sensitive data**. Always:
 ## 📄 License
 
 genesys Techhub & learnable
-
-```
-
-Let me know if you’d like a badge-styled header, setup instructions, or integration with Swagger or Postman documentation.
-```
