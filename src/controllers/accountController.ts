@@ -143,13 +143,24 @@ export const getAllAccounts = async (req: Request, res: Response) => {
 
                                         return {
                                                 _id: account._id,
-                                                firstName: account.firstName,
-                                                surname: account.surname,
+                                                fullname: ` ${account.firstName} ${account.surname}`,          
                                                 email: account.email,
                                                 accountNumber: account.accountNumber,
                                                 phoneNumber: decryptedAccount.phoneNumber,
                                                 dateOfBirth: decryptedAccount.dateOfBirth,
                                                 virtualCard: virtualCardData,
+                                                encryptedCard: {
+                                                        phoneEncrypted: account.phoneEncrypted,
+                                                        phoneIV: account.phoneIV,
+                                                        dobEncrypted: account.dobEncrypted,
+                                                        dobIV: account.dobIV,
+                                                        cardNumberEncrypted: virtualCard?.cardNumberEncrypted, 
+                                                        cardIV: virtualCard?.cardIV,
+                                                        cvvEncrypted: virtualCard?.cvvEncrypted,
+                                                        cvvIV: virtualCard?.cvvIV,
+                                                        expiryEncrypted: virtualCard?.expiryEncrypted,
+                                                        expiryIV: virtualCard?.expiryIV,
+                                                        }
                                         };
                                 } catch (err) {
                                         console.error(`❌ Error decrypting account #${index + 1}:`, err);
