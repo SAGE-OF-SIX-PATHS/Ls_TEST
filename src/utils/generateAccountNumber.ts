@@ -10,7 +10,7 @@ export const generateUniqueAccountNumber = async (): Promise<string> => {
 
     const existing = await BankAccount.findOne({ accountNumber });
     if (!existing) unique = true;
-
+    
     attempts++;
   }
 

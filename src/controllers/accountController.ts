@@ -1,11 +1,10 @@
-// src/controllers/account.controller.ts
 import { Request, Response } from 'express';
 import BankAccount from '../models/BankAccount';
 import VirtualCard from '../models/VirtualCard';
 import { generateUniqueAccountNumber } from '../utils/generateAccountNumber';
 import { encryptFields, decryptFields, SensitiveFields } from '../services/encryption.service';
 
-// Generate card details
+// 🔢 Generate random card details (card number, CVV, expiry date)
 const generateCardDetails = () => {
         const cardNumber = Array.from({ length: 16 }, () => Math.floor(Math.random() * 10)).join('');
         const cvv = String(Math.floor(100 + Math.random() * 900));
@@ -15,26 +14,40 @@ const generateCardDetails = () => {
         return { cardNumber, cvv, expiryDate };
 };
 
+// 🧾 Create a new bank account with encrypted sensitive info
 export const createAccount = async (req: Request, res: Response): Promise<void> => {
         try {
                 console.log('[createAccount] Received request body:', req.body);
                 const { firstName, surname, email, phoneNumber, dateOfBirth } = req.body;
 
+                // ✅ Step 1: Validate input
                 if (!firstName || !surname || !email || !phoneNumber || !dateOfBirth) {
                         console.error('[createAccount] Missing required fields');
                         res.status(400).json({ error: 'All fields are required.' });
                         return;
                 }
 
+                // ✅ Step 2: Check if account with email already exists
+                const existing = await BankAccount.findOne({ email });
+                if (existing) {
+                        console.warn('[createAccount] Account already exists for email:', email);
+                        res.status(409).json({ error: `Account already exists for this email. ${email}` });
+                        return;
+                }
+
+                // 🔢 Step 3: Generate a unique 10-digit account number
                 const accountNumber = await generateUniqueAccountNumber();
                 console.log('[createAccount] Generated account number:', accountNumber);
 
+                // 💳 Step 4: Generate virtual card details
                 const { cardNumber, cvv, expiryDate } = generateCardDetails();
-                const sensitiveData: SensitiveFields = { cardNumber, cvv, expiryDate, phoneNumber, dateOfBirth };
 
+                // 🔐 Step 5: Encrypt sensitive data
+                const sensitiveData: SensitiveFields = { cardNumber, cvv, expiryDate, phoneNumber, dateOfBirth };
                 const encryptedData = encryptFields(sensitiveData);
                 console.log('[createAccount] Encrypted data successfully');
 
+                // 💾 Step 6: Create and save BankAccount document
                 const newAccount = new BankAccount({
                         firstName,
                         surname,
@@ -44,12 +57,13 @@ export const createAccount = async (req: Request, res: Response): Promise<void> 
                         phoneIV: encryptedData.phone.iv,
                         dobEncrypted: encryptedData.dob.encryptedData,
                         dobIV: encryptedData.dob.iv,
-                        iv: encryptedData.card.iv, // For reference
+                        iv: encryptedData.card.iv, // optional reference field
                 });
 
                 const savedAccount = await newAccount.save();
                 console.log('[createAccount] BankAccount saved:', savedAccount._id);
 
+                // 💾 Step 7: Create and save VirtualCard document linked to the account
                 const newCard = new VirtualCard({
                         accountId: savedAccount._id,
                         cardNumberEncrypted: encryptedData.card.encryptedData,
@@ -63,6 +77,7 @@ export const createAccount = async (req: Request, res: Response): Promise<void> 
                 await newCard.save();
                 console.log('[createAccount] VirtualCard saved:', newCard._id);
 
+                // 🔓 Step 8: Decrypt data just for return demo (remove in production!)
                 const decrypted = decryptFields({
                         cardNumberEncrypted: encryptedData.card.encryptedData,
                         cardIV: encryptedData.card.iv,
@@ -78,6 +93,7 @@ export const createAccount = async (req: Request, res: Response): Promise<void> 
 
                 console.log('[createAccount] Decrypted for response:', decrypted);
 
+                // 📤 Step 9: Return success response with account and virtual card
                 res.status(201).json({
                         message: 'Account created successfully! ✅ Your virtual card is ready! 💳',
                         account: savedAccount,
@@ -86,7 +102,7 @@ export const createAccount = async (req: Request, res: Response): Promise<void> 
                                 cvv: decrypted.cvv,
                                 expiryDate: decrypted.expiryDate,
                         },
-                        decryptedSensitiveData: decrypted, // ⚠️ Remove this in production!
+                        decryptedSensitiveData: decrypted, // ⚠️ For dev/testing only. Remove in production!
                 });
         } catch (error) {
                 console.error('[createAccount] Error:', error);
@@ -94,6 +110,7 @@ export const createAccount = async (req: Request, res: Response): Promise<void> 
         }
 };
 
+// 📥 Fetch all accounts and return them with decrypted info
 export const getAllAccounts = async (req: Request, res: Response) => {
         try {
                 console.log('🔍 Fetching all accounts...');
@@ -105,6 +122,7 @@ export const getAllAccounts = async (req: Request, res: Response) => {
                                 try {
                                         console.log(`➡️ Decrypting account #${index + 1} - ID: ${account._id}`);
 
+                                        // 🔓 Decrypt phone and DOB from BankAccount
                                         const decryptedAccount = decryptFields({
                                                 cardNumberEncrypted: '', cardIV: '',
                                                 cvvEncrypted: '', cvvIV: '',
@@ -115,12 +133,14 @@ export const getAllAccounts = async (req: Request, res: Response) => {
                                                 dobIV: account.dobIV,
                                         });
 
+                                        // 🔍 Try to find matching VirtualCard for the account
                                         const virtualCard = await VirtualCard.findOne({ accountId: account._id });
                                         let virtualCardData = null;
 
                                         if (virtualCard) {
                                                 console.log(`🔍 Found VirtualCard for account #${index + 1}`);
 
+                                                // 🔓 Decrypt card data from VirtualCard
                                                 const decryptedCard = decryptFields({
                                                         cardNumberEncrypted: virtualCard.cardNumberEncrypted,
                                                         cardIV: virtualCard.cardIV,
@@ -143,7 +163,7 @@ export const getAllAccounts = async (req: Request, res: Response) => {
 
                                         return {
                                                 _id: account._id,
-                                                fullname: ` ${account.firstName} ${account.surname}`,          
+                                                fullname: `${account.firstName} ${account.surname}`,
                                                 email: account.email,
                                                 accountNumber: account.accountNumber,
                                                 phoneNumber: decryptedAccount.phoneNumber,
@@ -154,13 +174,13 @@ export const getAllAccounts = async (req: Request, res: Response) => {
                                                         phoneIV: account.phoneIV,
                                                         dobEncrypted: account.dobEncrypted,
                                                         dobIV: account.dobIV,
-                                                        cardNumberEncrypted: virtualCard?.cardNumberEncrypted, 
+                                                        cardNumberEncrypted: virtualCard?.cardNumberEncrypted,
                                                         cardIV: virtualCard?.cardIV,
                                                         cvvEncrypted: virtualCard?.cvvEncrypted,
                                                         cvvIV: virtualCard?.cvvIV,
                                                         expiryEncrypted: virtualCard?.expiryEncrypted,
                                                         expiryIV: virtualCard?.expiryIV,
-                                                        }
+                                                }
                                         };
                                 } catch (err) {
                                         console.error(`❌ Error decrypting account #${index + 1}:`, err);

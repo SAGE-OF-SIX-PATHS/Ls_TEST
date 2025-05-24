@@ -98,3 +98,4 @@ export function decryptFields(data: EncryptedInput): SensitiveFields {
 
           return result as SensitiveFields;
 }
+// I used those logs to trace the decryption process step-by-step, ensuring that each field is handled correctly and any missing data is logged without causing errors.
