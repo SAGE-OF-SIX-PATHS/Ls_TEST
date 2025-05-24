@@ -161,13 +161,12 @@ This app handles **sensitive data**. Always:
 
 **Nzubechukwu Akpamgbo** — I am very Passionate about building secure and efficient systems.
 
+```ts
+nzubeakpamgbo@gmail.com 
+```
+
 ---
 
 ## 📄 License
 
 genesys Techhub & learnable
-
-```
-
-Let me know if you’d like a badge-styled header, setup instructions, or integration with Swagger or Postman documentation.
-```
