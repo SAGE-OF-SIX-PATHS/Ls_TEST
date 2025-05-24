@@ -88,7 +88,7 @@ https://ls-test-064b.onrender.com
 
 ### Published PostMan API documentation: 
 ```ts 
-<a href="">https://documenter.getpostman.com/view/42958692/2sB2qcBLLx</a>
+https://documenter.getpostman.com/view/42958692/2sB2qcBLLx
 ```
 
 ### Link to the PostMan API Documentation: 
