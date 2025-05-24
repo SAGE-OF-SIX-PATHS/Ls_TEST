@@ -88,12 +88,12 @@ https://ls-test-064b.onrender.com
 
 ### Published PostMan API documentation: 
 ```ts 
-https://ls-test-064b.onrender.com](https://documenter.getpostman.com/view/42958692/2sB2qcBLLx
+https://documenter.getpostman.com/view/42958692/2sB2qcBLLx
 ```
 
 ### Link to the PostMan API Documentation: 
 ```ts 
-[https://ls-test-064b.onrender.com](https://www.postman.com/payload-cosmonaut-74889724/workspace/bank-account-api/collection/42958692-0ce456f1-8a88-4ae7-979a-a39916a96fda?action=share&creator=42958692)
+https://www.postman.com/payload-cosmonaut-74889724/workspace/bank-account-api/collection/42958692-0ce456f1-8a88-4ae7-979a-a39916a96fda?action=share&creator=42958692
 ```
 
 ### ✅ 1. `GET /api/createBankAccount`
