@@ -14,7 +14,9 @@ app.use(express.json());
 app.use(express.json());
 app.use('/api', accountRoutes); // endpoint: /handle accounts fetch and post task
 app.use('/api', decryptionRoutes); // endpoint: /decrypt for decryption task
-
+app.get('/', (req, res) => {
+          res.send('Welcome to the Decryption API');
+})
 
 const PORT = process.env.PORT || 5000;
 

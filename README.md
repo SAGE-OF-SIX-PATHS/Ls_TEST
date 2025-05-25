@@ -86,16 +86,6 @@ Encryption ensures that even if database access is compromised, sensitive data r
 https://ls-test-064b.onrender.com
 ```
 
-### Published PostMan API documentation: 
-```ts 
-https://documenter.getpostman.com/view/42958692/2sB2qcBLLx
-```
-
-### Link to the PostMan API Documentation: 
-```ts 
-https://www.postman.com/payload-cosmonaut-74889724/workspace/bank-account-api/collection/42958692-0ce456f1-8a88-4ae7-979a-a39916a96fda?action=share&creator=42958692
-```
-
 ### ✅ 1. `GET /api/createBankAccount`
 Instantly create user bank account and authomatically generates a virtual card with 3 fields: card number, cvv, expiry date (3 years from date of creation).
 
